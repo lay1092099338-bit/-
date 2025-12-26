@@ -66,7 +66,7 @@ const App: React.FC = () => {
       <Sidebar />
 
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        {/* Header - Tabs Style like screenshot */}
+        {/* Header */}
         <header className="h-10 bg-white border-b border-gray-200 flex items-center px-4 shrink-0">
           <div className="flex items-center space-x-1 h-full">
             <div className="flex items-center px-3 h-[80%] bg-blue-50 text-blue-600 border-t-2 border-blue-600 text-xs font-medium cursor-pointer">
@@ -90,7 +90,6 @@ const App: React.FC = () => {
           <div className="flex items-center space-x-6">
             <h2 className="text-xl font-bold text-gray-800 tracking-tight">网站资源管理</h2>
             
-            {/* 搜索框加强 */}
             <div className="relative group">
               <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors"></i>
               <input
@@ -112,7 +111,7 @@ const App: React.FC = () => {
           <div className="flex items-center space-x-4">
             <button 
               onClick={() => setIsDocOpen(true)}
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[11px] font-bold hover:bg-amber-100 transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[11px] font-bold hover:bg-amber-100 transition-colors shadow-sm"
             >
               <i className="fas fa-file-invoice"></i>
               <span>产品文档 (PRD)</span>
@@ -129,10 +128,8 @@ const App: React.FC = () => {
         <div className="p-6 flex-1">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
             
-            {/* Action Bar */}
             <div className="p-4 border-b border-gray-50 flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                {/* 筛选 UI 优化 */}
                 <div className="relative">
                   <button 
                     onClick={() => setShowFilterDropdown(!showFilterDropdown)}
@@ -233,11 +230,11 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Table */}
             <div className="flex-1 overflow-auto">
               <table className="w-full text-left border-collapse min-w-[1000px]">
                 <thead>
                   <tr className="bg-gray-50 text-gray-500 text-[12px] uppercase tracking-wider font-bold border-b border-gray-100 sticky top-0 z-10">
+                    <th className="px-6 py-4 text-center w-12"><i className="fas fa-flag"></i></th>
                     <th className="px-6 py-4">网站主体信息</th>
                     <th className="px-6 py-4">资源分类</th>
                     <th className="px-6 py-4">支持属性 (Attributes)</th>
@@ -250,13 +247,24 @@ const App: React.FC = () => {
                   {filteredWebsites.length > 0 ? (
                     filteredWebsites.map((website) => (
                       <tr key={website.id} className="hover:bg-blue-50/10 transition-colors group">
+                        <td className="px-6 py-4 text-center">
+                           {website.attributes.length === 0 && (
+                             <i className="fas fa-circle-exclamation text-red-500 animate-pulse"></i>
+                           )}
+                        </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-blue-100 group-hover:text-blue-500 transition-colors">
                               <i className="fas fa-globe"></i>
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-sm font-bold text-gray-800 group-hover:text-blue-600 transition-colors">{website.name}</span>
+                              {/* 根据属性是否为空，名称标红显示 */}
+                              <span className={`text-sm font-bold transition-colors ${
+                                website.attributes.length === 0 ? 'text-red-600' : 'text-gray-800 group-hover:text-blue-600'
+                              }`}>
+                                {website.name}
+                                {website.attributes.length === 0 && <span className="ml-2 text-[10px] bg-red-50 text-red-500 px-1 rounded">待补全</span>}
+                              </span>
                               <span className="text-[11px] text-gray-400 font-mono tracking-tight">{website.url}</span>
                             </div>
                           </div>
@@ -273,11 +281,15 @@ const App: React.FC = () => {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-wrap gap-1.5">
-                            {website.attributes.map(attr => (
-                              <span key={attr} className="px-2 py-0.5 bg-gray-50 text-gray-500 text-[10px] rounded border border-gray-100 font-medium">
-                                {attr}
-                              </span>
-                            ))}
+                            {website.attributes.length > 0 ? (
+                              website.attributes.map(attr => (
+                                <span key={attr} className="px-2 py-0.5 bg-gray-50 text-gray-500 text-[10px] rounded border border-gray-100 font-medium">
+                                  {attr}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-[10px] text-gray-300 italic">尚未配置属性</span>
+                            )}
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -302,7 +314,7 @@ const App: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-20 text-center text-gray-400">
+                      <td colSpan={7} className="px-6 py-20 text-center text-gray-400">
                         <i className="fas fa-folder-open text-4xl mb-4 block opacity-20"></i>
                         <span className="text-sm">没有找到匹配的网站数据</span>
                       </td>
@@ -312,7 +324,6 @@ const App: React.FC = () => {
               </table>
             </div>
             
-            {/* Pagination */}
             <div className="p-4 bg-gray-50 flex items-center justify-between border-t border-gray-100 shrink-0">
               <p className="text-xs text-gray-500 font-medium">
                 当前显示 {filteredWebsites.length} 条记录 (共 {websites.length} 条)
