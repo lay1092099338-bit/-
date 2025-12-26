@@ -2,12 +2,14 @@
 import React, { useState, useMemo } from 'react';
 import Sidebar from './components/Sidebar';
 import WebsiteModal from './components/WebsiteModal';
+import DocModal from './components/DocModal';
 import { Website, WebsiteFormData, WebsiteCategory, SupportType, Attribute } from './types';
 import { INITIAL_WEBSITES } from './constants';
 
 const App: React.FC = () => {
   const [websites, setWebsites] = useState<Website[]>(INITIAL_WEBSITES);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDocOpen, setIsDocOpen] = useState(false);
   const [editingWebsite, setEditingWebsite] = useState<Website | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -107,8 +109,16 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 mr-4 px-4 py-2 bg-gray-50 rounded-lg text-xs font-medium text-gray-500">
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setIsDocOpen(true)}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[11px] font-bold hover:bg-amber-100 transition-colors"
+            >
+              <i className="fas fa-file-invoice"></i>
+              <span>产品文档 (PRD)</span>
+            </button>
+
+            <div className="flex items-center space-x-2 px-4 py-2 bg-gray-50 rounded-lg text-xs font-medium text-gray-500 border border-gray-100">
                <i className="fas fa-user-shield text-blue-500"></i>
                <span>林安逸 (Super Admin)</span>
             </div>
@@ -220,9 +230,6 @@ const App: React.FC = () => {
                   <i className="fas fa-plus mr-2"></i>
                   添加支持网站
                 </button>
-                <button className="px-6 py-2 bg-[#ff4d4f] text-white rounded-lg font-bold text-sm hover:bg-[#ff7875] transition-all flex items-center">
-                  批量管理
-                </button>
               </div>
             </div>
 
@@ -330,6 +337,11 @@ const App: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleFormSubmit}
         initialData={editingWebsite}
+      />
+
+      <DocModal 
+        isOpen={isDocOpen} 
+        onClose={() => setIsDocOpen(false)} 
       />
     </div>
   );
